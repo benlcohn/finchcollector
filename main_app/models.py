@@ -9,19 +9,31 @@ MEALS = (
 )
 
 # Create your models here.
+class Food(models.Model):
+    name = models.CharField(max_length=50)
+    prep = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+    
+    def get_absolute_url(self):
+       return reverse('foods_detail', kwargs={'pk': self.id})
+
 class Finch(models.Model):
     name = models.CharField(max_length=100)
     breed = models.CharField(max_length=100)
     description = models.TextField(max_length=250)
     age = models.IntegerField()
+    foods = models.ManyToManyField(Food)
+
+    def __str__(self):
+        return f'{self.name} ({self.id})'
+
+    def get_absolute_url(self):
+        return reverse('detail', kwargs={'finch_id': self.id})
+    
     def fed_for_today(self):
          return self.feeding_set.filter(date=date.today()).count() >= len(MEALS)
-
-def __str__(self):
-    return f'{self.name} ({self.id})'
-
-def get_absolute_url(self):
-    return reverse('detail', kwargs={'finch_id': self.id})
 
 class Feeding(models.Model):
   date = models.DateField('feeding date')
